@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Validad />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Validador de Cobertura Telcos USA</title>
   <style>
     :root {
@@ -13,10 +15,10 @@
       --primary-hover: #1d4ed8;
       --text: #f9fafb;
       --muted: #9ca3af;
-      --error-bg: rgba(127, 29, 29, 0.3);
+      --error-bg: rgba(127, 29, 29, 0.35);
       --error-border: #ef4444;
       --error-text: #fca5a5;
-      --success-bg: rgba(6, 78, 59, 0.35);
+      --success-bg: rgba(6, 78, 59, 0.4);
       --success-border: #10b981;
       --success-text: #6ee7b7;
     }
@@ -52,22 +54,22 @@
     }
 
     .header {
-      margin-bottom: 1.75rem;
+      margin-bottom: 1.5rem;
     }
 
     .title {
-      font-size: 1.5rem;
+      font-size: 1.45rem;
       font-weight: 700;
       color: #fff;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.4rem;
     }
 
     .subtitle {
       color: var(--muted);
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       line-height: 1.4;
     }
 
@@ -115,7 +117,6 @@
       font-size: 0.88rem;
       color: #e5e7eb;
       border-bottom: 1px solid #374151;
-      transition: background 0.15s;
     }
 
     .suggestions-list li:last-child {
@@ -137,15 +138,11 @@
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
-      transition: background-color 0.2s, transform 0.1s;
+      transition: background-color 0.2s;
     }
 
     .submit-btn:hover:not(:disabled) {
       background-color: var(--primary-hover);
-    }
-
-    .submit-btn:active:not(:disabled) {
-      transform: scale(0.99);
     }
 
     .submit-btn:disabled {
@@ -154,18 +151,12 @@
     }
 
     .feedback-box {
-      margin-top: 1.5rem;
+      margin-top: 1.25rem;
       padding: 1.1rem;
       border-radius: 10px;
       font-size: 0.9rem;
       line-height: 1.5;
       display: none;
-      animation: fadeIn 0.25s ease-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-4px); }
-      to { opacity: 1; transform: translateY(0); }
     }
 
     .feedback-box.error {
@@ -206,18 +197,21 @@
         <p class="subtitle">Ingresa un código postal (ZIP de 5 dígitos) o tu dirección completa.</p>
       </div>
 
-      <div class="input-wrapper">
-        <input 
-          type="text" 
-          id="addressInput" 
-          class="search-input" 
-          placeholder="Ej: 90210 o 1126 Fernwood Ct, New Brunswick, NJ"
-          autocomplete="off"
-        />
-        <ul id="suggestions" class="suggestions-list"></ul>
-      </div>
+      <!-- Formulario para captura correcta del evento Enter y Clic -->
+      <form id="coverageForm" onsubmit="event.preventDefault(); window.handleValidate();">
+        <div class="input-wrapper">
+          <input 
+            type="text" 
+            id="addressInput" 
+            class="search-input" 
+            placeholder="Ej: 90210 o 1126 Fernwood Ct, New Brunswick, NJ"
+            autocomplete="off"
+          />
+          <ul id="suggestions" class="suggestions-list"></ul>
+        </div>
 
-      <button id="btnConsultar" class="submit-btn">Consultar Cobertura</button>
+        <button type="submit" id="btnConsultar" class="submit-btn">Consultar Cobertura</button>
+      </form>
 
       <div id="feedbackBox" class="feedback-box"></div>
     </div>
@@ -231,7 +225,7 @@
 
     let debounceTimer;
 
-    // Autocompletado gratuito usando Photon API (OpenStreetMap)
+    // Autocompletado predictivo con Photon / OpenStreetMap
     input.addEventListener('input', () => {
       clearTimeout(debounceTimer);
       const query = input.value.trim();
@@ -283,8 +277,8 @@
       }
     });
 
-    // Validación dual y manejo de respuestas
-    btn.addEventListener('click', async () => {
+    // Función global de validación
+    window.handleValidate = async function() {
       const val = input.value.trim();
       feedback.className = 'feedback-box';
       feedback.style.display = 'none';
@@ -297,7 +291,7 @@
       const zipPattern = /^\d{5}$/;
 
       if (zipPattern.test(val)) {
-        // Flujo por ZIP Code
+        // Flujo por Código Postal (5 dígitos)
         btn.textContent = 'Verificando ZIP Code...';
         btn.disabled = true;
         try {
@@ -312,10 +306,10 @@
           showSuccess(
             `Zona confirmada: ${place['place name']}, ${place['state abbreviation']} (${val})`,
             '📡 Cobertura general disponible en la zona: AT&T Fiber, Spectrum, Xfinity.',
-            'Para verificar la velocidad exacta disponible en tu domicilio específico, ingresa tu número y calle.'
+            'Para verificar la velocidad exacta en tu domicilio, ingresa tu número y calle.'
           );
         } catch (e) {
-          showError('Error de red al consultar el código postal. Intenta nuevamente.');
+          showError('Error de conexión al verificar el código postal. Intenta nuevamente.');
         } finally {
           btn.textContent = 'Consultar Cobertura';
           btn.disabled = false;
@@ -339,7 +333,7 @@
           btn.disabled = false;
         }, 500);
       }
-    });
+    };
 
     function showError(msg) {
       feedback.className = 'feedback-box error';
