@@ -1,350 +1,312 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Validador de Cobertura Telcos USA</title>
-  <style>
-    :root {
-      --bg: #0b0f19;
-      --card-bg: #111827;
-      --card-border: #1f2937;
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
-      --text: #f9fafb;
-      --muted: #9ca3af;
-      --error-bg: rgba(127, 29, 29, 0.4);
-      --error-border: #ef4444;
-      --error-text: #fca5a5;
-      --success-bg: rgba(6, 78, 59, 0.45);
-      --success-border: #10b981;
-      --success-text: #6ee7b7;
+'use client';
+
+import React, { useState, useEffect, useRef } from 'react';
+
+interface Suggestion {
+  formatted: string;
+}
+
+export default function CoverageChecker() {
+  const [query, setQuery] = useState('');
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<{
+    type: 'error' | 'success' | null;
+    title: string;
+    message: string;
+    note?: string | null;
+  }>({
+    type: null,
+    title: '',
+    message: '',
+    note: null,
+  });
+  const [showDropdown, setShowDropdown] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  // Autocompletado gratuito Photon / OSM
+  useEffect(() => {
+    const trimmed = query.trim();
+    if (trimmed.length < 3 || /^\d{1,5}$/.test(trimmed)) {
+      setSuggestions([]);
+      setShowDropdown(false);
+      return;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(
+          `https://photon.komoot.io/api/?q=${encodeURIComponent(trimmed)}&limit=5&lang=en`
+        );
+        const data = await res.json();
+        
+        const usMatches = (data.features || [])
+          .filter((f: any) => f.properties?.countrycode === 'US' || f.properties?.country === 'United States')
+          .map((f: any) => {
+            const p = f.properties;
+            const parts = [p.housenumber, p.street, p.city || p.district, p.state, p.postcode].filter(Boolean);
+            return { formatted: parts.join(', ') };
+          })
+          .filter((item: Suggestion) => item.formatted.length > 0);
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 1.5rem;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 500px;
-    }
-
-    .card {
-      background-color: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 2.25rem;
-      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
-    }
-
-    .header {
-      margin-bottom: 1.5rem;
-    }
-
-    .title {
-      font-size: 1.45rem;
-      font-weight: 700;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.4rem;
-    }
-
-    .subtitle {
-      color: var(--muted);
-      font-size: 0.88rem;
-      line-height: 1.4;
-    }
-
-    .input-wrapper {
-      position: relative;
-      margin-bottom: 1.25rem;
-    }
-
-    .search-input {
-      width: 100%;
-      padding: 0.9rem 1.1rem;
-      background: #030712;
-      border: 1px solid #374151;
-      border-radius: 10px;
-      color: #fff;
-      font-size: 0.95rem;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    .search-input:focus {
-      border-color: var(--primary);
-    }
-
-    .suggestions-list {
-      position: absolute;
-      top: calc(100% + 4px);
-      left: 0;
-      right: 0;
-      background: #1f2937;
-      border: 1px solid #374151;
-      border-radius: 10px;
-      max-height: 200px;
-      overflow-y: auto;
-      z-index: 100;
-      list-style: none;
-      display: none;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-    }
-
-    .suggestions-list li {
-      padding: 0.75rem 1rem;
-      cursor: pointer;
-      font-size: 0.88rem;
-      color: #e5e7eb;
-      border-bottom: 1px solid #374151;
-    }
-
-    .suggestions-list li:last-child {
-      border-bottom: none;
-    }
-
-    .suggestions-list li:hover {
-      background: #374151;
-      color: #fff;
-    }
-
-    .submit-btn {
-      width: 100%;
-      padding: 0.9rem;
-      background-color: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      position: relative;
-      z-index: 10;
-      transition: background-color 0.2s;
-    }
-
-    .submit-btn:hover:not(:disabled) {
-      background-color: var(--primary-hover);
-    }
-
-    .submit-btn:disabled {
-      opacity: 0.65;
-      cursor: not-allowed;
-    }
-
-    .feedback-box {
-      margin-top: 1.25rem;
-      padding: 1.1rem;
-      border-radius: 10px;
-      font-size: 0.9rem;
-      line-height: 1.5;
-      display: none;
-    }
-
-    .feedback-box.error {
-      background-color: var(--error-bg);
-      border: 1px solid var(--error-border);
-      color: var(--error-text);
-    }
-
-    .feedback-box.success {
-      background-color: var(--success-bg);
-      border: 1px solid var(--success-border);
-      color: var(--success-text);
-    }
-
-    .feedback-box strong {
-      display: block;
-      font-size: 0.95rem;
-      margin-bottom: 0.35rem;
-    }
-  </style>
-</head>
-<body>
-
-  <div class="container">
-    <div class="card">
-      <div class="header">
-        <h1 class="title">⚡ Validador Telcos USA</h1>
-        <p class="subtitle">Ingresa un código postal (ZIP de 5 dígitos) o tu dirección completa.</p>
-      </div>
-
-      <div class="input-wrapper">
-        <input 
-          type="text" 
-          id="addressInput" 
-          class="search-input" 
-          placeholder="Ej: 90210 o 1126 Fernwood Ct, New Brunswick, NJ"
-          autocomplete="off"
-          onkeydown="if(event.key === 'Enter'){ event.preventDefault(); window.handleValidate(); }"
-        />
-        <ul id="suggestions" class="suggestions-list"></ul>
-      </div>
-
-      <button 
-        type="button" 
-        id="btnConsultar" 
-        class="submit-btn" 
-        onclick="window.handleValidate()"
-      >
-        Consultar Cobertura
-      </button>
-
-      <div id="feedbackBox" class="feedback-box"></div>
-    </div>
-  </div>
-
-  <script>
-    var input = document.getElementById('addressInput');
-    var suggestions = document.getElementById('suggestions');
-    var btn = document.getElementById('btnConsultar');
-    var feedback = document.getElementById('feedbackBox');
-
-    var debounceTimer;
-
-    // Autocompletado gratuito
-    input.addEventListener('input', function() {
-      clearTimeout(debounceTimer);
-      var query = input.value.trim();
-
-      if (query.length < 3 || /^\d{1,5}$/.test(query)) {
-        suggestions.style.display = 'none';
-        return;
+        setSuggestions(usMatches);
+        setShowDropdown(usMatches.length > 0);
+      } catch (err) {
+        setSuggestions([]);
       }
+    }, 300);
 
-      debounceTimer = setTimeout(async function() {
-        try {
-          var res = await fetch('https://photon.komoot.io/api/?q=' + encodeURIComponent(query) + '&limit=5&lang=en');
-          var data = await res.json();
-          
-          var usFeatures = (data.features || []).filter(function(f) {
-            return f.properties.countrycode === 'US' || f.properties.country === 'United States';
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  // Clic fuera del dropdown
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setShowDropdown(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Validación
+  const handleValidate = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const val = query.trim();
+    setShowDropdown(false);
+
+    if (!val) {
+      setStatus({
+        type: 'error',
+        title: 'Aviso',
+        message: 'Por favor ingresa un código postal o una dirección completa.',
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    if (/^\d{5}$/.test(val)) {
+      // Flujo Código Postal
+      try {
+        const res = await fetch(`https://api.zippopotam.us/us/${val}`);
+        if (!res.ok) {
+          setStatus({
+            type: 'error',
+            title: 'Código postal no encontrado',
+            message: `El código postal "${val}" no existe en EE. UU. Verifica los 5 dígitos.`,
           });
-
-          if (usFeatures.length > 0) {
-            suggestions.innerHTML = '';
-            usFeatures.forEach(function(item) {
-              var p = item.properties;
-              var parts = [p.housenumber, p.street, p.city || p.district, p.state, p.postcode].filter(Boolean);
-              var formatted = parts.join(', ');
-
-              if (formatted) {
-                var li = document.createElement('li');
-                li.textContent = formatted;
-                li.onclick = function() {
-                  input.value = formatted;
-                  suggestions.style.display = 'none';
-                };
-                suggestions.appendChild(li);
-              }
-            });
-            suggestions.style.display = suggestions.children.length > 0 ? 'block' : 'none';
-          } else {
-            suggestions.style.display = 'none';
-          }
-        } catch (e) {
-          suggestions.style.display = 'none';
-        }
-      }, 300);
-    });
-
-    document.addEventListener('click', function(e) {
-      if (!input.contains(e.target) && !suggestions.contains(e.target)) {
-        suggestions.style.display = 'none';
-      }
-    });
-
-    // Función principal de validación (invocada directamente por onclick y Enter)
-    window.handleValidate = async function() {
-      var val = (input.value || '').trim();
-      suggestions.style.display = 'none';
-      feedback.style.display = 'none';
-      feedback.className = 'feedback-box';
-
-      if (!val) {
-        showError('Por favor ingresa un código postal o una dirección completa.');
-        return;
-      }
-
-      var zipPattern = /^\d{5}$/;
-
-      if (zipPattern.test(val)) {
-        // Validación de Código Postal (5 dígitos)
-        btn.textContent = 'Verificando ZIP Code...';
-        btn.disabled = true;
-        try {
-          var res = await fetch('https://api.zippopotam.us/us/' + val);
-          if (!res.ok) {
-            showError('El código postal "' + val + '" no existe en EE. UU. Verifica los 5 dígitos.');
-            return;
-          }
-          var data = await res.json();
-          var place = data.places[0];
-
-          showSuccess(
-            'Zona confirmada: ' + place['place name'] + ', ' + place['state abbreviation'] + ' (' + val + ')',
-            '📡 Cobertura general disponible en el área: AT&T Fiber, Spectrum, Xfinity.',
-            'Para consultar la velocidad exacta disponible en tu domicilio, ingresa tu número y calle.'
-          );
-        } catch (err) {
-          showError('No se pudo verificar el código postal. Revisa tu conexión.');
-        } finally {
-          btn.textContent = 'Consultar Cobertura';
-          btn.disabled = false;
-        }
-      } else {
-        // Validación de Dirección Completa
-        var hasNumber = /\d+/.test(val);
-        if (!hasNumber) {
-          showError('Para validar una dirección exacta, incluye el número de calle (Ej: 1126 Fernwood Ct, New Brunswick, NJ 08901).');
+          setLoading(false);
           return;
         }
 
-        btn.textContent = 'Consultando...';
-        btn.disabled = true;
-        setTimeout(function() {
-          showSuccess(
-            'Dirección validada: ' + val,
-            '🚀 Servicios disponibles: Fibra Óptica 1 Gbps / Cable 500 Mbps.'
-          );
-          btn.textContent = 'Consultar Cobertura';
-          btn.disabled = false;
-        }, 400);
-      }
-    };
+        const data = await res.json();
+        const place = data.places?.[0];
 
-    function showError(msg) {
-      feedback.className = 'feedback-box error';
-      feedback.style.display = 'block';
-      feedback.innerHTML = '<strong>⚠️ Aviso</strong>' + msg;
-    }
-
-    function showSuccess(title, details, note) {
-      feedback.className = 'feedback-box success';
-      feedback.style.display = 'block';
-      var html = '<strong>✅ ' + title + '</strong><p>' + details + '</p>';
-      if (note) {
-        html += '<div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid rgba(255,255,255,0.15);font-size:0.8rem;opacity:0.85;">*' + note + '</div>';
+        setStatus({
+          type: 'success',
+          title: `Zona confirmada: ${place['place name']}, ${place['state abbreviation']} (${val})`,
+          message: '📡 Cobertura general disponible en el área: AT&T Fiber, Spectrum, Xfinity.',
+          note: 'Para consultar la velocidad exacta en tu domicilio específico, ingresa tu número y calle.',
+        });
+      } catch (err) {
+        setStatus({
+          type: 'error',
+          title: 'Error de conexión',
+          message: 'No se pudo conectar con el servicio postal. Intenta nuevamente.',
+        });
+      } finally {
+        setLoading(false);
       }
-      feedback.innerHTML = html;
+    } else {
+      // Flujo Dirección
+      if (!/\d+/.test(val)) {
+        setStatus({
+          type: 'error',
+          title: 'Falta número de calle',
+          message: 'Para validar una dirección exacta, ingresa el número de calle (Ej: 1126 Fernwood Ct, New Brunswick, NJ 08901).',
+        });
+        setLoading(false);
+        return;
+      }
+
+      setTimeout(() => {
+        setStatus({
+          type: 'success',
+          title: `Dirección validada: ${val}`,
+          message: '🚀 Servicios disponibles: Fibra Óptica hasta 1 Gbps / Cable 500 Mbps.',
+          note: null,
+        });
+        setLoading(false);
+      }, 350);
     }
-  </script>
-</body>
-</html>
+  };
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: '#0b0f19',
+      color: '#f9fafb',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '1.5rem',
+      fontFamily: 'system-ui, -apple-system, sans-serif'
+    }}>
+      <div style={{
+        width: '100%',
+        maxWidth: '500px',
+        backgroundColor: '#111827',
+        border: '1px solid #1f2937',
+        borderRadius: '16px',
+        padding: '2.25rem',
+        boxShadow: '0 20px 40px -15px rgba(0, 0, 0, 0.6)'
+      }}>
+        <div style={{ marginBottom: '1.5rem' }}>
+          <h1 style={{
+            fontSize: '1.45rem',
+            fontWeight: 700,
+            color: '#ffffff',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            marginBottom: '0.4rem'
+          }}>
+            ⚡ Validador Telcos USA
+          </h1>
+          <p style={{ color: '#9ca3af', fontSize: '0.88rem', margin: 0 }}>
+            Ingresa un código postal (ZIP de 5 dígitos) o tu dirección completa.
+          </p>
+        </div>
+
+        <form onSubmit={handleValidate}>
+          <div style={{ position: 'relative', marginBottom: '1.25rem' }} ref={wrapperRef}>
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Ej: 90210 o 1126 Fernwood Ct, New Brunswick, NJ"
+              autoComplete="off"
+              style={{
+                width: '100%',
+                boxSizing: 'border-box',
+                padding: '0.9rem 1.1rem',
+                backgroundColor: '#030712',
+                border: '1px solid #374151',
+                borderRadius: '10px',
+                color: '#ffffff',
+                fontSize: '0.95rem',
+                outline: 'none'
+              }}
+            />
+
+            {showDropdown && suggestions.length > 0 && (
+              <ul style={{
+                position: 'absolute',
+                top: 'calc(100% + 4px)',
+                left: 0,
+                right: 0,
+                backgroundColor: '#1f2937',
+                border: '1px solid #374151',
+                borderRadius: '10px',
+                maxHeight: '200px',
+                overflowY: 'auto',
+                zIndex: 100,
+                listStyle: 'none',
+                padding: 0,
+                margin: 0,
+                boxShadow: '0 10px 25px rgba(0, 0, 0, 0.5)'
+              }}>
+                {suggestions.map((item, idx) => (
+                  <li
+                    key={idx}
+                    onClick={() => {
+                      setQuery(item.formatted);
+                      setShowDropdown(false);
+                    }}
+                    style={{
+                      padding: '0.75rem 1rem',
+                      cursor: 'pointer',
+                      fontSize: '0.88rem',
+                      color: '#e5e7eb',
+                      borderBottom: idx === suggestions.length - 1 ? 'none' : '1px solid #374151'
+                    }}
+                  >
+                    {item.formatted}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              width: '100%',
+              padding: '0.9rem',
+              backgroundColor: '#2563eb',
+              color: '#ffffff',
+              border: 'none',
+              borderRadius: '10px',
+              fontSize: '1rem',
+              fontWeight: 600,
+              cursor: loading ? 'not-allowed' : 'pointer',
+              opacity: loading ? 0.7 : 1
+            }}
+          >
+            {loading ? 'Consultando...' : 'Consultar Cobertura'}
+          </button>
+        </form>
+
+        {status.type === 'error' && (
+          <div style={{
+            marginTop: '1.25rem',
+            padding: '1.1rem',
+            borderRadius: '10px',
+            fontSize: '0.9rem',
+            lineHeight: 1.5,
+            backgroundColor: 'rgba(127, 29, 29, 0.4)',
+            border: '1px solid #ef4444',
+            color: '#fca5a5'
+          }}>
+            <strong style={{ display: 'block', marginBottom: '0.35rem' }}>
+              ⚠️ {status.title}
+            </strong>
+            {status.message}
+          </div>
+        )}
+
+        {status.type === 'success' && (
+          <div style={{
+            marginTop: '1.25rem',
+            padding: '1.1rem',
+            borderRadius: '10px',
+            fontSize: '0.9rem',
+            lineHeight: 1.5,
+            backgroundColor: 'rgba(6, 78, 59, 0.45)',
+            border: '1px solid #10b981',
+            color: '#6ee7b7'
+          }}>
+            <strong style={{ display: 'block', marginBottom: '0.35rem' }}>
+              ✅ {status.title}
+            </strong>
+            <p style={{ margin: 0 }}>{status.message}</p>
+            {status.note && (
+              <div style={{
+                marginTop: '0.5rem',
+                paddingTop: '0.5rem',
+                borderTop: '1px solid rgba(255, 255, 255, 0.15)',
+                fontSize: '0.8rem',
+                opacity: 0.85
+              }}>
+                *{status.note}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
