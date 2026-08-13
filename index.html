@@ -3,8 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Validad />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Validador de Cobertura Telcos USA</title>
   <style>
     :root {
@@ -15,10 +13,10 @@
       --primary-hover: #1d4ed8;
       --text: #f9fafb;
       --muted: #9ca3af;
-      --error-bg: rgba(127, 29, 29, 0.35);
+      --error-bg: rgba(127, 29, 29, 0.4);
       --error-border: #ef4444;
       --error-text: #fca5a5;
-      --success-bg: rgba(6, 78, 59, 0.4);
+      --success-bg: rgba(6, 78, 59, 0.45);
       --success-border: #10b981;
       --success-text: #6ee7b7;
     }
@@ -42,7 +40,7 @@
 
     .container {
       width: 100%;
-      max-width: 520px;
+      max-width: 500px;
     }
 
     .card {
@@ -87,23 +85,22 @@
       color: #fff;
       font-size: 0.95rem;
       outline: none;
-      transition: all 0.2s ease;
+      transition: border-color 0.2s;
     }
 
     .search-input:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
     }
 
     .suggestions-list {
       position: absolute;
-      top: calc(100% + 6px);
+      top: calc(100% + 4px);
       left: 0;
       right: 0;
       background: #1f2937;
       border: 1px solid #374151;
       border-radius: 10px;
-      max-height: 220px;
+      max-height: 200px;
       overflow-y: auto;
       z-index: 100;
       list-style: none;
@@ -138,6 +135,8 @@
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
+      position: relative;
+      z-index: 10;
       transition: background-color 0.2s;
     }
 
@@ -160,14 +159,12 @@
     }
 
     .feedback-box.error {
-      display: block;
       background-color: var(--error-bg);
       border: 1px solid var(--error-border);
       color: var(--error-text);
     }
 
     .feedback-box.success {
-      display: block;
       background-color: var(--success-bg);
       border: 1px solid var(--success-border);
       color: var(--success-text);
@@ -177,14 +174,6 @@
       display: block;
       font-size: 0.95rem;
       margin-bottom: 0.35rem;
-    }
-
-    .feedback-note {
-      margin-top: 0.5rem;
-      padding-top: 0.5rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      font-size: 0.8rem;
-      opacity: 0.85;
     }
   </style>
 </head>
@@ -197,64 +186,69 @@
         <p class="subtitle">Ingresa un código postal (ZIP de 5 dígitos) o tu dirección completa.</p>
       </div>
 
-      <!-- Formulario para captura correcta del evento Enter y Clic -->
-      <form id="coverageForm" onsubmit="event.preventDefault(); window.handleValidate();">
-        <div class="input-wrapper">
-          <input 
-            type="text" 
-            id="addressInput" 
-            class="search-input" 
-            placeholder="Ej: 90210 o 1126 Fernwood Ct, New Brunswick, NJ"
-            autocomplete="off"
-          />
-          <ul id="suggestions" class="suggestions-list"></ul>
-        </div>
+      <div class="input-wrapper">
+        <input 
+          type="text" 
+          id="addressInput" 
+          class="search-input" 
+          placeholder="Ej: 90210 o 1126 Fernwood Ct, New Brunswick, NJ"
+          autocomplete="off"
+          onkeydown="if(event.key === 'Enter'){ event.preventDefault(); window.handleValidate(); }"
+        />
+        <ul id="suggestions" class="suggestions-list"></ul>
+      </div>
 
-        <button type="submit" id="btnConsultar" class="submit-btn">Consultar Cobertura</button>
-      </form>
+      <button 
+        type="button" 
+        id="btnConsultar" 
+        class="submit-btn" 
+        onclick="window.handleValidate()"
+      >
+        Consultar Cobertura
+      </button>
 
       <div id="feedbackBox" class="feedback-box"></div>
     </div>
   </div>
 
   <script>
-    const input = document.getElementById('addressInput');
-    const suggestions = document.getElementById('suggestions');
-    const btn = document.getElementById('btnConsultar');
-    const feedback = document.getElementById('feedbackBox');
+    var input = document.getElementById('addressInput');
+    var suggestions = document.getElementById('suggestions');
+    var btn = document.getElementById('btnConsultar');
+    var feedback = document.getElementById('feedbackBox');
 
-    let debounceTimer;
+    var debounceTimer;
 
-    // Autocompletado predictivo con Photon / OpenStreetMap
-    input.addEventListener('input', () => {
+    // Autocompletado gratuito
+    input.addEventListener('input', function() {
       clearTimeout(debounceTimer);
-      const query = input.value.trim();
+      var query = input.value.trim();
 
       if (query.length < 3 || /^\d{1,5}$/.test(query)) {
         suggestions.style.display = 'none';
         return;
       }
 
-      debounceTimer = setTimeout(async () => {
+      debounceTimer = setTimeout(async function() {
         try {
-          const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=5&lang=en`);
-          const data = await res.json();
+          var res = await fetch('https://photon.komoot.io/api/?q=' + encodeURIComponent(query) + '&limit=5&lang=en');
+          var data = await res.json();
           
-          const usFeatures = (data.features || []).filter(f => 
-            f.properties.countrycode === 'US' || f.properties.country === 'United States'
-          );
+          var usFeatures = (data.features || []).filter(function(f) {
+            return f.properties.countrycode === 'US' || f.properties.country === 'United States';
+          });
 
           if (usFeatures.length > 0) {
             suggestions.innerHTML = '';
-            usFeatures.forEach(item => {
-              const p = item.properties;
-              const parts = [p.housenumber, p.street, p.city || p.district, p.state, p.postcode].filter(Boolean);
-              const formatted = parts.join(', ');
+            usFeatures.forEach(function(item) {
+              var p = item.properties;
+              var parts = [p.housenumber, p.street, p.city || p.district, p.state, p.postcode].filter(Boolean);
+              var formatted = parts.join(', ');
 
               if (formatted) {
-                const li = document.createElement('li');
+                var li = document.createElement('li');
                 li.textContent = formatted;
-                li.onclick = () => {
+                li.onclick = function() {
                   input.value = formatted;
                   suggestions.style.display = 'none';
                 };
@@ -271,80 +265,83 @@
       }, 300);
     });
 
-    document.addEventListener('click', (e) => {
+    document.addEventListener('click', function(e) {
       if (!input.contains(e.target) && !suggestions.contains(e.target)) {
         suggestions.style.display = 'none';
       }
     });
 
-    // Función global de validación
+    // Función principal de validación (invocada directamente por onclick y Enter)
     window.handleValidate = async function() {
-      const val = input.value.trim();
-      feedback.className = 'feedback-box';
+      var val = (input.value || '').trim();
+      suggestions.style.display = 'none';
       feedback.style.display = 'none';
+      feedback.className = 'feedback-box';
 
       if (!val) {
         showError('Por favor ingresa un código postal o una dirección completa.');
         return;
       }
 
-      const zipPattern = /^\d{5}$/;
+      var zipPattern = /^\d{5}$/;
 
       if (zipPattern.test(val)) {
-        // Flujo por Código Postal (5 dígitos)
+        // Validación de Código Postal (5 dígitos)
         btn.textContent = 'Verificando ZIP Code...';
         btn.disabled = true;
         try {
-          const res = await fetch(`https://api.zippopotam.us/us/${val}`);
+          var res = await fetch('https://api.zippopotam.us/us/' + val);
           if (!res.ok) {
-            showError(`El código postal "${val}" no existe en EE. UU. Verifica los 5 dígitos.`);
+            showError('El código postal "' + val + '" no existe en EE. UU. Verifica los 5 dígitos.');
             return;
           }
-          const data = await res.json();
-          const place = data.places[0];
+          var data = await res.json();
+          var place = data.places[0];
 
           showSuccess(
-            `Zona confirmada: ${place['place name']}, ${place['state abbreviation']} (${val})`,
-            '📡 Cobertura general disponible en la zona: AT&T Fiber, Spectrum, Xfinity.',
-            'Para verificar la velocidad exacta en tu domicilio, ingresa tu número y calle.'
+            'Zona confirmada: ' + place['place name'] + ', ' + place['state abbreviation'] + ' (' + val + ')',
+            '📡 Cobertura general disponible en el área: AT&T Fiber, Spectrum, Xfinity.',
+            'Para consultar la velocidad exacta disponible en tu domicilio, ingresa tu número y calle.'
           );
-        } catch (e) {
-          showError('Error de conexión al verificar el código postal. Intenta nuevamente.');
+        } catch (err) {
+          showError('No se pudo verificar el código postal. Revisa tu conexión.');
         } finally {
           btn.textContent = 'Consultar Cobertura';
           btn.disabled = false;
         }
       } else {
-        // Flujo por Dirección Completa
-        const hasNumber = /\d+/.test(val);
+        // Validación de Dirección Completa
+        var hasNumber = /\d+/.test(val);
         if (!hasNumber) {
-          showError('Para validar una dirección exacta, ingresa el número de calle (Ej: 1126 Fernwood Ct, New Brunswick, NJ 08901).');
+          showError('Para validar una dirección exacta, incluye el número de calle (Ej: 1126 Fernwood Ct, New Brunswick, NJ 08901).');
           return;
         }
 
         btn.textContent = 'Consultando...';
         btn.disabled = true;
-        setTimeout(() => {
+        setTimeout(function() {
           showSuccess(
-            `Dirección validada: ${val}`,
+            'Dirección validada: ' + val,
             '🚀 Servicios disponibles: Fibra Óptica 1 Gbps / Cable 500 Mbps.'
           );
           btn.textContent = 'Consultar Cobertura';
           btn.disabled = false;
-        }, 500);
+        }, 400);
       }
     };
 
     function showError(msg) {
       feedback.className = 'feedback-box error';
-      feedback.innerHTML = `<strong>⚠️ Aviso</strong>${msg}`;
+      feedback.style.display = 'block';
+      feedback.innerHTML = '<strong>⚠️ Aviso</strong>' + msg;
     }
 
-    function showSuccess(title, details, note = null) {
+    function showSuccess(title, details, note) {
       feedback.className = 'feedback-box success';
-      let html = `<strong>✅ ${title}</strong><p>${details}</p>`;
+      feedback.style.display = 'block';
+      var html = '<strong>✅ ' + title + '</strong><p>' + details + '</p>';
       if (note) {
-        html += `<div class="feedback-note">${note}</div>`;
+        html += '<div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid rgba(255,255,255,0.15);font-size:0.8rem;opacity:0.85;">*' + note + '</div>';
       }
       feedback.innerHTML = html;
     }
