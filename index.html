@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validador Multimarca Telcos USA</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        body { background: #0f172a; color: #f8fafc; margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; }
+        .container { width: 100%; max-width: 780px; background: #1e293b; border-radius: 16px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid #334155; }
+        h2 { margin-top: 0; color: #38bdf8; display: flex; align-items: center; gap: 8px; font-size: 22px; }
+        .subtitle { color: #94a3b8; font-size: 14px; margin-top: -8px; margin-bottom: 20px; }
+        
+        .search-box { display: flex; gap: 10px; margin-bottom: 20px; }
+        input { flex: 1; padding: 14px 16px; border-radius: 10px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 15px; }
+        input:focus { outline: none; border-color: #38bdf8; box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2); }
+        button.btn-search { background: #0284c7; color: white; font-weight: bold; border: none; padding: 14px 24px; border-radius: 10px; cursor: pointer; transition: 0.2s; font-size: 15px; }
+        button.btn-search:hover { background: #0369a1; }
+        button.btn-search:disabled { background: #475569; cursor: not-allowed; }
+
+        .address-box { background: #0f172a; border-left: 4px solid #38bdf8; padding: 14px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .address-text { font-size: 15px; color: #f1f5f9; font-weight: 600; }
+        .btn-copy { background: #334155; color: #38bdf8; border: 1px solid #475569; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.2s; }
+        .btn-copy:hover { background: #38bdf8; color: #0f172a; }
+
+        .provider-card { background: #27354f; border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; border: 1px solid #3b4d6e; transition: transform 0.1s ease; }
+        .provider-card:hover { transform: translateY(-2px); }
+        .provider-card.fiber { border-left: 6px solid #22c55e; background: #18332b; }
+        .provider-card.cable { border-left: 6px solid #38bdf8; }
+        .provider-card.wireless { border-left: 6px solid #f59e0b; }
+        
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .provider-title { font-size: 18px; font-weight: bold; color: #ffffff; }
+        
+        .badge { font-size: 11px; font-weight: bold; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
+        .badge-fiber { background: #22c55e; color: #052e16; }
+        .badge-cable { background: #38bdf8; color: #082f49; }
+        .badge-wireless { background: #f59e0b; color: #451a03; }
+
+        .speed-desc { font-size: 14px; color: #cbd5e1; margin-bottom: 4px; }
+        .offer-tip { font-size: 13px; color: #4ade80; margin-top: 8px; font-weight: 600; background: rgba(34, 197, 94, 0.1); padding: 6px 10px; border-radius: 6px; }
+        
+        .loader { text-align: center; color: #38bdf8; font-size: 15px; margin: 25px 0; display: none; }
+        .error-msg { background: #451a1a; border: 1px solid #dc2626; color: #fca5a5; padding: 12px 16px; border-radius: 8px; margin-top: 15px; display: none; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>⚡ Validador Multimarca Telcos USA</h2>
+    <div class="subtitle">Verifica cobertura exacta a la puerta para AT&T, Optimum, Spectrum, Xfinity, Frontier y más.</div>
+    
+    <div class="search-box">
+        <input type="text" id="addressInput" placeholder="Ej: 1126 Fernwood Ct, New Brunswick, NJ 08901" onkeypress="if(event.key==='Enter') buscarCobertura()">
+        <button class="btn-search" id="btnSearch" onclick="buscarCobertura()">Consultar</button>
+    </div>
+
+    <div id="loader" class="loader">🔍 Normalizando dirección y validando proveedores en FCC...</div>
+    <div id="errorBox" class="error-msg"></div>
+
+    <div id="results" style="display: none;">
+        <div class="address-box">
+            <div>
+                <div style="font-size: 12px; color: #94a3b8; margin-bottom: 2px;">Dirección Confirmada (Oficial):</div>
+                <div class="address-text" id="cleanAddress">--</div>
+            </div>
+            <button class="btn-copy" onclick="copiarDireccion()">📋 Copiar</button>
+        </div>
+        <div id="providersList"></div>
+    </div>
+</div>
+
+<script>
+async function buscarCobertura() {
+    const address = document.getElementById('addressInput').value.trim();
+    const loader = document.getElementById('loader');
+    const errorBox = document.getElementById('errorBox');
+    const results = document.getElementById('results');
+    const list = document.getElementById('providersList');
+    const btn = document.getElementById('btnSearch');
+
+    if (!address) {
+        alert("Por favor ingresa una dirección completa.");
+        return;
+    }
+
+    errorBox.style.display = 'none';
+    results.style.display = 'none';
+    loader.style.display = 'block';
+    btn.disabled = true;
+
+    try {
+        const response = await fetch(`/api/check?address=${encodeURIComponent(address)}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || "No se pudo obtener información para esta dirección.");
+        }
+
+        document.getElementById('cleanAddress').textContent = data.address;
+        list.innerHTML = '';
+
+        const providers = data.providers;
+        const brandNames = Object.keys(providers);
+
+        if (brandNames.length === 0) {
+            list.innerHTML = `<div style="text-align: center; color: #94a3b8; padding: 20px;">No se encontraron marcas de tu cartera en este domicilio (zona operada por cooperativas o satelital).</div>`;
+        } else {
+            brandNames.forEach(brand => {
+                const plans = providers[brand].sort((a, b) => b.isFiber - a.isFiber || b.downSpeed - a.downSpeed);
+                const best = plans[0];
+                
+                const cardClass = best.isFiber ? 'fiber' : (best.isCable ? 'cable' : 'wireless');
+                const badgeTag = best.isFiber 
+                    ? `<span class="badge badge-fiber">🟢 FIBRA PURA</span>` 
+                    : (best.isCable ? `<span class="badge badge-cable">🔵 CABLE COAXIAL</span>` : `<span class="badge badge-wireless">🟡 INALÁMBRICO / AIR</span>`);
+
+                let pitchTip = '';
+                if (brand === 'AT&T' && best.isFiber) {
+                    pitchTip = `<div class="offer-tip">🎯 Ofrecer: AT&T Fiber 300, 500 o 1000 GIG${best.downSpeed >= 2000 ? ', 2 GIG, 5 GIG' : ''}</div>`;
+                } else if (brand === 'AT&T' && !best.isFiber) {
+                    pitchTip = `<div class="offer-tip" style="color: #fbbf24; background: rgba(245, 158, 11, 0.1);">🎯 Solo disponible: AT&T Internet Air (FWA) hasta ${best.downSpeed} Mbps</div>`;
+                } else if (best.isFiber) {
+                    pitchTip = `<div class="offer-tip">🎯 Ofrecer: Fibra Simétrica (Hasta ${best.downSpeed} Mbps)</div>`;
+                } else if (best.isCable) {
+                    pitchTip = `<div class="offer-tip" style="color: #67e8f9; background: rgba(56, 189, 248, 0.1);">🎯 Ofrecer: Plan Residencial (Hasta ${best.downSpeed} Mbps de bajada)</div>`;
+                }
+
+                list.innerHTML += `
+                    <div class="provider-card ${cardClass}">
+                        <div class="card-header">
+                            <span class="provider-title">${brand}</span>
+                            ${badgeTag}
+                        </div>
+                        <div class="speed-desc"><strong>Tecnología:</strong> ${best.techName}</div>
+                        <div class="speed-desc"><strong>Velocidad Máxima Registrada:</strong> ${best.downSpeed} Mbps Bajada / ${best.upSpeed} Mbps Subida</div>
+                        ${pitchTip}
+                    </div>
+                `;
+            });
+        }
+
+        results.style.display = 'block';
+
+    } catch (err) {
+        errorBox.textContent = err.message;
+        errorBox.style.display = 'block';
+    } finally {
+        loader.style.display = 'none';
+        btn.disabled = false;
+    }
+}
+
+function copiarDireccion() {
+    const text = document.getElementById('cleanAddress').textContent;
+    navigator.clipboard.writeText(text);
+    const btn = event.target;
+    btn.textContent = "✔ Copiado";
+    setTimeout(() => { btn.textContent = "📋 Copiar"; }, 2000);
+}
+</script>
+
+</body>
+</html>
