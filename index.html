@@ -3,21 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Validador de Cobertura Telcos USA</title>
+  <title>ValidatorPro3000 - Cobertura Telcos USA</title>
   
-  <!-- FAVICON VECTORIAL TRANSPARENTE (SIN FONDO) -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120' fill='none'%3E%3Cdefs%3E%3ClinearGradient id='cg' x1='20%25' y1='20%25' x2='80%25' y2='80%25'%3E%3Cstop offset='0%25' stop-color='%23003b95'/%3E%3Cstop offset='100%25' stop-color='%230066cc'/%3E%3C/linearGradient%3E%3ClinearGradient id='wg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300b4d8'/%3E%3Cstop offset='100%25' stop-color='%2300e5ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M 36 62 L 48 76 C 50 78 54 78 56 76 L 74 50' stroke='url(%23cg)' stroke-width='11' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M 66 43 A 18 18 0 0 1 82 59' stroke='url(%23wg)' stroke-width='6' stroke-linecap='round'/%3E%3Cpath d='M 66 30 A 31 31 0 0 1 95 59' stroke='url(%23wg)' stroke-width='6' stroke-linecap='round'/%3E%3Cpath d='M 66 17 A 44 44 0 0 1 108 59' stroke='url(%23wg)' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <!-- FAVICON VECTORIAL MASCOTA ROBOT VALIDATORPRO3000 -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none'%3E%3Crect width='100' height='100' rx='24' fill='%23080c14'/%3E%3C!-- Orejas Antenas --%3E%3Ccircle cx='18' cy='45' r='6' fill='%2300f5d4' stroke='%230077b6' stroke-width='3'/%3E%3Ccircle cx='82' cy='45' r='6' fill='%2300f5d4' stroke='%230077b6' stroke-width='3'/%3E%3C!-- Cabeza Robot --%3E%3Crect x='22' y='22' width='56' height='46' rx='16' fill='%23ffffff' stroke='%230077b6' stroke-width='4'/%3E%3C!-- Pantalla Facial --%3E%3Crect x='28' y='28' width='44' height='34' rx='10' fill='%23030712'/%3E%3C!-- Ojo Lente Izq --%3E%3Ccircle cx='40' cy='43' r='7' fill='none' stroke='%2300f5d4' stroke-width='3'/%3E%3Ccircle cx='40' cy='43' r='3' fill='%2300f5d4'/%3E%3C!-- Ojo Guiño Der --%3E%3Cpath d='M54 43 Q60 38 66 43' stroke='%2300f5d4' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C!-- Sonrisa --%3E%3Cpath d='M46 53 Q53 58 60 53' stroke='%2300f5d4' stroke-width='2.5' stroke-linecap='round' fill='none'/%3E%3C!-- Antena Superior con Luz Verde --%3E%3Cpath d='M50 22 L50 14' stroke='%230077b6' stroke-width='3'/%3E%3Ccircle cx='50' cy='12' r='4' fill='%2310b981'/%3E%3C/svg%3E" />
 
   <style>
     :root {
-      --bg: #080c14;
-      --card-bg: #0f172a;
-      --card-border: #1e293b;
-      --primary: #0057b8;
-      --primary-hover: #004494;
+      --bg: #070a12;
+      --card-bg: #0d1527;
+      --card-border: #1e2d4a;
+      --primary: #00f5d4;
+      --primary-hover: #00d2b6;
+      --primary-glow: rgba(0, 245, 212, 0.25);
+      --accent-blue: #0077b6;
       --text: #f8fafc;
       --muted: #94a3b8;
-      --error-bg: rgba(127, 29, 29, 0.4);
+      --error-bg: rgba(127, 29, 29, 0.45);
       --error-border: #ef4444;
       --error-text: #fca5a5;
     }
@@ -27,6 +29,7 @@
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background-color: var(--bg);
+      background-image: radial-gradient(circle at 50% 0%, rgba(0, 245, 212, 0.08) 0%, transparent 60%);
       color: var(--text);
       display: flex;
       justify-content: center;
@@ -37,38 +40,44 @@
 
     .container {
       width: 100%;
-      max-width: 620px;
+      max-width: 680px;
     }
 
     .card {
       background-color: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 16px;
+      border-radius: 20px;
       padding: 2.25rem 2rem;
-      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 245, 212, 0.05);
     }
 
+    /* Encabezado con Mascota Robot */
     .header-branding {
       display: flex;
       align-items: center;
-      gap: 0.85rem;
+      gap: 1rem;
       margin-bottom: 1.5rem;
     }
 
-    .app-logo {
-      width: 48px;
-      height: 48px;
+    .robot-mascot-badge {
+      width: 64px;
+      height: 64px;
       flex-shrink: 0;
+      filter: drop-shadow(0 0 10px rgba(0, 245, 212, 0.3));
     }
 
-    .title {
-      font-size: 1.45rem;
-      font-weight: 700;
-      color: #fff;
+    .brand-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      background: linear-gradient(135deg, #ffffff 40%, var(--primary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
       margin-bottom: 0.25rem;
+      text-transform: uppercase;
     }
 
-    .subtitle {
+    .brand-subtitle {
       color: var(--muted);
       font-size: 0.88rem;
     }
@@ -80,61 +89,68 @@
 
     .search-input {
       width: 100%;
-      padding: 0.9rem 1.1rem;
+      padding: 0.95rem 1.15rem;
       background: #030712;
       border: 1px solid #334155;
-      border-radius: 10px;
+      border-radius: 12px;
       color: #fff;
       font-size: 0.95rem;
       outline: none;
-      transition: border-color 0.2s;
+      transition: all 0.2s;
     }
 
     .search-input:focus {
-      border-color: #38bdf8;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
     }
 
     .suggestions-list {
       position: absolute;
-      top: calc(100% + 4px);
+      top: calc(100% + 5px);
       left: 0;
       right: 0;
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 10px;
+      background: #111c33;
+      border: 1px solid #2a3c61;
+      border-radius: 12px;
       max-height: 200px;
       overflow-y: auto;
       z-index: 100;
       list-style: none;
       display: none;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
     }
 
     .suggestions-list li {
-      padding: 0.75rem 1rem;
+      padding: 0.8rem 1rem;
       cursor: pointer;
       font-size: 0.88rem;
       color: #e2e8f0;
-      border-bottom: 1px solid #334155;
+      border-bottom: 1px solid #1e2d4a;
     }
 
     .suggestions-list li:last-child { border-bottom: none; }
-    .suggestions-list li:hover { background: #334155; color: #fff; }
+    .suggestions-list li:hover { background: #1b2a4a; color: var(--primary); }
 
     .submit-btn {
       width: 100%;
-      padding: 0.9rem;
-      background-color: var(--primary);
+      padding: 0.95rem;
+      background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
       color: #fff;
-      border: none;
-      border-radius: 10px;
+      border: 1px solid rgba(0, 245, 212, 0.4);
+      border-radius: 12px;
       font-size: 1rem;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
-      transition: background-color 0.2s;
+      transition: all 0.2s;
+      box-shadow: 0 4px 15px rgba(0, 119, 182, 0.3);
     }
 
-    .submit-btn:hover:not(:disabled) { background-color: var(--primary-hover); }
+    .submit-btn:hover:not(:disabled) {
+      background: linear-gradient(135deg, #00c6eb 0%, #0088cc 100%);
+      box-shadow: 0 4px 20px rgba(0, 245, 212, 0.4);
+      transform: translateY(-1px);
+    }
+
     .submit-btn:disabled { opacity: 0.65; cursor: not-allowed; }
 
     .results-container {
@@ -149,60 +165,99 @@
     }
 
     .address-banner {
-      background: #030712;
-      border: 1px solid #334155;
+      background: #050b17;
+      border: 1px solid #1b2a4a;
+      border-left: 4px solid var(--primary);
       padding: 0.85rem 1rem;
       border-radius: 8px;
       font-size: 0.9rem;
-      font-weight: 600;
-      color: #38bdf8;
+      font-weight: 700;
+      color: var(--primary);
       margin-bottom: 1rem;
     }
 
-    .service-section {
-      background: #131d31;
-      border: 1px solid #1e293b;
-      border-radius: 8px;
-      margin-bottom: 0.85rem;
-      overflow: hidden;
+    .carrier-tabs {
+      display: flex;
+      gap: 0.4rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #1e2d4a;
     }
 
-    .service-header {
-      padding: 0.6rem 1rem;
-      font-size: 0.88rem;
+    .tab-btn {
+      background: #111c33;
+      border: 1px solid #233454;
+      color: #94a3b8;
+      padding: 0.55rem 0.95rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: #0077b6;
+      color: #fff;
+      border-color: var(--primary);
+      box-shadow: 0 0 10px rgba(0, 245, 212, 0.2);
+    }
+
+    .carrier-panel {
+      display: none;
+      background: #0a1222;
+      border: 1px solid #1a2942;
+      border-radius: 10px;
+      padding: 1.2rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .carrier-panel.active { display: block; }
+
+    .carrier-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.85rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #1a2942;
+    }
+
+    .carrier-name {
+      font-size: 1.05rem;
       font-weight: 700;
       color: #fff;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
     }
 
-    .service-header.att { background: #0057b8; }
-    .service-header.directv { background: #d97706; }
-
-    .service-content {
-      padding: 0.85rem 1rem;
-      font-size: 0.85rem;
+    .carrier-tech {
+      font-size: 0.78rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      background: rgba(0, 245, 212, 0.12);
+      color: var(--primary);
+      font-weight: 600;
+      border: 1px solid rgba(0, 245, 212, 0.2);
     }
 
     .plans-table {
       width: 100%;
       border-collapse: collapse;
       font-size: 0.83rem;
-      margin-top: 0.5rem;
     }
 
     .plans-table th {
       text-align: left;
-      padding: 0.4rem 0.5rem;
+      padding: 0.45rem 0.5rem;
       color: #94a3b8;
-      border-bottom: 1px solid #334155;
+      border-bottom: 1px solid #233454;
       font-weight: 600;
     }
 
     .plans-table td {
-      padding: 0.6rem 0.5rem;
-      border-bottom: 1px solid #1e293b;
+      padding: 0.65rem 0.5rem;
+      border-bottom: 1px solid #142036;
       color: #f1f5f9;
     }
 
@@ -216,23 +271,14 @@
     }
 
     .price-promo {
-      color: #34d399;
+      color: var(--primary);
       font-weight: 700;
-    }
-
-    .badge-speed {
-      background: rgba(56, 189, 248, 0.15);
-      color: #38bdf8;
-      padding: 0.2rem 0.45rem;
-      border-radius: 4px;
-      font-weight: 600;
-      font-size: 0.78rem;
     }
 
     .footnote {
       font-size: 0.75rem;
       color: #64748b;
-      margin-top: 0.6rem;
+      margin-top: 0.7rem;
       font-style: italic;
     }
 
@@ -253,27 +299,37 @@
   <div class="container">
     <div class="card">
       
-      <!-- LOGO DE LA APP Y TÍTULO -->
+      <!-- LOGO MASCOTA ROBOT Y TÍTULO VALIDATORPRO3000 -->
       <div class="header-branding">
-        <svg class="app-logo" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="checkGrad" x1="20%" y1="20%" x2="80%" y2="80%">
-              <stop offset="0%" stop-color="#003b95"/>
-              <stop offset="100%" stop-color="#0066cc"/>
-            </linearGradient>
-            <linearGradient id="wifiGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#00b4d8"/>
-              <stop offset="100%" stop-color="#00e5ff"/>
-            </linearGradient>
-          </defs>
-          <path d="M 36 62 L 48 76 C 50 78 54 78 56 76 L 74 50" stroke="url(#checkGrad)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M 66 43 A 18 18 0 0 1 82 59" stroke="url(#wifiGrad)" stroke-width="6" stroke-linecap="round"/>
-          <path d="M 66 30 A 31 31 0 0 1 95 59" stroke="url(#wifiGrad)" stroke-width="6" stroke-linecap="round"/>
-          <path d="M 66 17 A 44 44 0 0 1 108 59" stroke="url(#wifiGrad)" stroke-width="6" stroke-linecap="round"/>
+        <svg class="robot-mascot-badge" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Antenas Laterales -->
+          <circle cx="15" cy="48" r="6" fill="#00f5d4" stroke="#0077b6" stroke-width="3"/>
+          <circle cx="85" cy="48" r="6" fill="#00f5d4" stroke="#0077b6" stroke-width="3"/>
+          
+          <!-- Cabeza Robot Principal -->
+          <rect x="20" y="24" width="60" height="48" rx="16" fill="#ffffff" stroke="#0077b6" stroke-width="4"/>
+          
+          <!-- Pantalla Digital Facial -->
+          <rect x="26" y="30" width="48" height="36" rx="10" fill="#030712"/>
+          
+          <!-- Ojo Lente Izquierdo -->
+          <circle cx="39" cy="46" r="8" fill="none" stroke="#00f5d4" stroke-width="3.5"/>
+          <circle cx="39" cy="46" r="3.5" fill="#00f5d4"/>
+          
+          <!-- Ojo Guiño Derecho -->
+          <path d="M54 46 Q61 40 68 46" stroke="#00f5d4" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+          
+          <!-- Sonrisa Digital -->
+          <path d="M45 56 Q54 62 63 56" stroke="#00f5d4" stroke-width="3" stroke-linecap="round" fill="none"/>
+          
+          <!-- Antena Superior con Luz Verde de Verificación -->
+          <path d="M50 24 L50 14" stroke="#0077b6" stroke-width="3.5"/>
+          <circle cx="50" cy="12" r="5" fill="#10b981" stroke="#00f5d4" stroke-width="1.5"/>
         </svg>
+
         <div>
-          <h1 class="title">Validador Telcos USA</h1>
-          <p class="subtitle">Consulta servicios, velocidades simétricas y ofertas por dirección o ZIP code.</p>
+          <h1 class="brand-title">ValidatorPro3000</h1>
+          <p class="brand-subtitle">Validador Multimarca Inteligente de Cobertura Telcos USA</p>
         </div>
       </div>
 
@@ -289,7 +345,7 @@
       </div>
 
       <button type="button" id="btnConsultar" class="submit-btn">
-        Consultar Cobertura
+        Consultar con ValidatorPro3000
       </button>
 
       <div id="errorBox" class="feedback-box" style="display: none;"></div>
@@ -298,64 +354,108 @@
         
         <div id="addressBanner" class="address-banner"></div>
 
-        <!-- 1. AT&T INTERNET FIBRA -->
-        <div class="service-section">
-          <div class="service-header att">
-            🌐 AT&T Internet (Fibra Óptica Simétrica)
-          </div>
-          <div class="service-content">
-            <table class="plans-table">
-              <thead>
-                <tr>
-                  <th>Plan</th>
-                  <th>Velocidad</th>
-                  <th>Precio Regular</th>
-                  <th>Promo AutoPay*</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><strong>Internet 1000</strong> (Fiber 1 GIG)</td>
-                  <td><span class="badge-speed">1 Gig up/down</span></td>
-                  <td><span class="price-strike">$90.00</span></td>
-                  <td><span class="price-promo">$80.00/mes*</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Internet 500</strong> (Fiber 500)</td>
-                  <td><span class="badge-speed">500 Mbps up/down</span></td>
-                  <td><span class="price-strike">$75.00</span></td>
-                  <td><span class="price-promo">$65.00/mes*</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Internet 300</strong> (Fiber 300)</td>
-                  <td><span class="badge-speed">300 Mbps up/down</span></td>
-                  <td><span class="price-strike">$60.00</span></td>
-                  <td><span class="price-promo">$50.00/mes*</span></td>
-                </tr>
-              </tbody>
-            </table>
-            <p class="footnote">*Precio tras descuento de $10/mes por AutoPay y facturación electrónica (sin contrato forzoso).</p>
-          </div>
+        <!-- Pestañas de Navegación Multimarca -->
+        <div class="carrier-tabs">
+          <button class="tab-btn active" onclick="switchTab('att')">AT&T Fiber</button>
+          <button class="tab-btn" onclick="switchTab('spectrum')">Spectrum</button>
+          <button class="tab-btn" onclick="switchTab('frontier')">Frontier</button>
+          <button class="tab-btn" onclick="switchTab('earthlink')">EarthLink</button>
+          <button class="tab-btn" onclick="switchTab('xfinity')">Xfinity</button>
         </div>
 
-        <!-- 2. DIRECTV STREAMING -->
-        <div class="service-section">
-          <div class="service-header directv">
-            📺 DIRECTV Streaming App
+        <!-- 1. AT&T FIBER -->
+        <div id="panel-att" class="carrier-panel active">
+          <div class="carrier-header">
+            <span class="carrier-name">🌐 AT&T Internet</span>
+            <span class="carrier-tech">Fibra Simétrica (100% Fibra)</span>
           </div>
-          <div class="service-content" style="color: #cbd5e1;">
-            ✅ <strong>Todos los paquetes de DIRECTV Streaming están disponibles</strong> (Entertainment, Choice, Ultimate, Premier) con activación inmediata y sin instalación satelital.
-          </div>
+          <table class="plans-table">
+            <thead>
+              <tr><th>Plan</th><th>Velocidad</th><th>Regular</th><th>Promo AutoPay*</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Internet 1000</strong> (1 GIG)</td><td>1000 Mbps simétricos</td><td><span class="price-strike">$90.00</span></td><td><span class="price-promo">$80.00/mes*</span></td></tr>
+              <tr><td><strong>Internet 500</strong></td><td>500 Mbps simétricos</td><td><span class="price-strike">$75.00</span></td><td><span class="price-promo">$65.00/mes*</span></td></tr>
+              <tr><td><strong>Internet 300</strong></td><td>300 Mbps simétricos</td><td><span class="price-strike">$60.00</span></td><td><span class="price-promo">$50.00/mes*</span></td></tr>
+            </tbody>
+          </table>
+          <p class="footnote">📺 <strong>DIRECTV Streaming & AT&T Wireless:</strong> Disponibles para combo con descuento adicional.</p>
         </div>
 
-        <!-- 3. AT&T WIRELESS -->
-        <div class="service-section">
-          <div class="service-header att">
-            📱 AT&T Wireless (Móvil 5G)
+        <!-- 2. SPECTRUM -->
+        <div id="panel-spectrum" class="carrier-panel">
+          <div class="carrier-header">
+            <span class="carrier-name">⚡ Spectrum Internet</span>
+            <span class="carrier-tech">Red HFC / Cable & Fibra</span>
           </div>
-          <div class="service-content" style="color: #cbd5e1;">
-            ✅ <strong>Todos los paquetes AT&T Wireless disponibles.</strong> Aplica descuento adicional del 20% al combinar con Internet Fibra.
+          <table class="plans-table">
+            <thead>
+              <tr><th>Plan</th><th>Velocidad</th><th>Regular</th><th>Promo 12 Meses*</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Spectrum Internet Gig</strong></td><td>Hasta 1000 Mbps</td><td><span class="price-strike">$109.99</span></td><td><span class="price-promo">$89.99/mes*</span></td></tr>
+              <tr><td><strong>Spectrum Internet Ultra</strong></td><td>Hasta 500 Mbps</td><td><span class="price-strike">$89.99</span></td><td><span class="price-promo">$69.99/mes*</span></td></tr>
+              <tr><td><strong>Spectrum Internet Premier</strong></td><td>Hasta 300 Mbps</td><td><span class="price-strike">$69.99</span></td><td><span class="price-promo">$49.99/mes*</span></td></tr>
+            </tbody>
+          </table>
+          <p class="footnote">*Sin contratos forzosos. Incluye módem sin costo adicional.</p>
+        </div>
+
+        <!-- 3. FRONTIER -->
+        <div id="panel-frontier" class="carrier-panel">
+          <div class="carrier-header">
+            <span class="carrier-name">🚀 Frontier Fiber</span>
+            <span class="carrier-tech">Fibra Simétrica XGS-PON</span>
           </div>
+          <table class="plans-table">
+            <thead>
+              <tr><th>Plan</th><th>Velocidad</th><th>Regular</th><th>Promo AutoPay*</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Fiber 2 Gig</strong></td><td>2000 Mbps simétricos</td><td><span class="price-strike">$109.99</span></td><td><span class="price-promo">$99.99/mes*</span></td></tr>
+              <tr><td><strong>Fiber 1 Gig</strong></td><td>1000 Mbps simétricos</td><td><span class="price-strike">$74.99</span></td><td><span class="price-promo">$64.99/mes*</span></td></tr>
+              <tr><td><strong>Fiber 500</strong></td><td>500 Mbps simétricos</td><td><span class="price-strike">$54.99</span></td><td><span class="price-promo">$44.99/mes*</span></td></tr>
+            </tbody>
+          </table>
+          <p class="footnote">*Incluye Router Wi-Fi 6 e instalación gratuita.</p>
+        </div>
+
+        <!-- 4. EARTHLINK -->
+        <div id="panel-earthlink" class="carrier-panel">
+          <div class="carrier-header">
+            <span class="carrier-name">🌍 EarthLink Fiber</span>
+            <span class="carrier-tech">Fibra Mayorista Cobertura Total</span>
+          </div>
+          <table class="plans-table">
+            <thead>
+              <tr><th>Plan</th><th>Velocidad</th><th>Precio Estándar</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>HyperLink 1 GIG</strong></td><td>Hasta 1000 Mbps</td><td><span class="price-promo">$89.95/mes</span></td></tr>
+              <tr><td><strong>HyperLink 500M</strong></td><td>Hasta 500 Mbps</td><td><span class="price-promo">$79.95/mes</span></td></tr>
+              <tr><td><strong>HyperLink 100M</strong></td><td>Hasta 100 Mbps</td><td><span class="price-promo">$59.95/mes</span></td></tr>
+            </tbody>
+          </table>
+          <p class="footnote">*Sin límites de datos (Unlimited Data) y sin aceleración de velocidad.</p>
+        </div>
+
+        <!-- 5. XFINITY -->
+        <div id="panel-xfinity" class="carrier-panel">
+          <div class="carrier-header">
+            <span class="carrier-name">📡 Xfinity (Comcast)</span>
+            <span class="carrier-tech">Red Cable Gigabit & Fibra</span>
+          </div>
+          <table class="plans-table">
+            <thead>
+              <tr><th>Plan</th><th>Velocidad</th><th>Regular</th><th>Promo 12 Meses*</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Gigabit Extra</strong></td><td>Hasta 1200 Mbps</td><td><span class="price-strike">$90.00</span></td><td><span class="price-promo">$75.00/mes*</span></td></tr>
+              <tr><td><strong>Superfast</strong></td><td>Hasta 800 Mbps</td><td><span class="price-strike">$75.00</span></td><td><span class="price-promo">$60.00/mes*</span></td></tr>
+              <tr><td><strong>Fast</strong></td><td>Hasta 400 Mbps</td><td><span class="price-strike">$60.00</span></td><td><span class="price-promo">$45.00/mes*</span></td></tr>
+            </tbody>
+          </table>
+          <p class="footnote">*Aplica descuento adicional al combinar con Xfinity Mobile.</p>
         </div>
 
       </div>
@@ -445,7 +545,7 @@
         return;
       }
 
-      btn.textContent = 'Consultando Calificación de Red...';
+      btn.textContent = 'Consultando ValidatorPro3000...';
       btn.disabled = true;
 
       const isZip = /^\d{5}$/.test(val);
@@ -460,29 +560,40 @@
           const data = await res.json();
           const place = data.places[0];
 
-          addressBanner.innerHTML = `📍 Zona Validada: ${place['place name'].toUpperCase()}, ${place['state abbreviation']} ${val}`;
+          addressBanner.innerHTML = `🤖 <strong>ValidatorPro3000</strong> — Zona Validada: ${place['place name'].toUpperCase()}, ${place['state abbreviation']} ${val}`;
           resultsContainer.style.display = 'block';
         } catch (e) {
           showError('Error de conexión al verificar el código postal.');
         } finally {
-          btn.textContent = 'Consultar Cobertura';
+          btn.textContent = 'Consultar con ValidatorPro3000';
           btn.disabled = false;
         }
       } else {
         const hasNumber = /\d+/.test(val);
         if (!hasNumber) {
           showError('Para validar una dirección exacta, ingresa el número de calle (Ej: 1045 91st Ave, Oakland, CA 94603).');
-          btn.textContent = 'Consultar Cobertura';
+          btn.textContent = 'Consultar con ValidatorPro3000';
           btn.disabled = false;
           return;
         }
 
         setTimeout(() => {
-          addressBanner.innerHTML = `📍 Dirección Calificada: ${val.toUpperCase()}`;
+          addressBanner.innerHTML = `🤖 <strong>ValidatorPro3000</strong> — Dirección Calificada: ${val.toUpperCase()}`;
           resultsContainer.style.display = 'block';
-          btn.textContent = 'Consultar Cobertura';
+          btn.textContent = 'Consultar con ValidatorPro3000';
           btn.disabled = false;
         }, 400);
+      }
+    }
+
+    function switchTab(carrier) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.carrier-panel').forEach(p => p.classList.remove('active'));
+
+      event.target.classList.add('active');
+      const targetPanel = document.getElementById('panel-' + carrier);
+      if (targetPanel) {
+        targetPanel.classList.add('active');
       }
     }
 
