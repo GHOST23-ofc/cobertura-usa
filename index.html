@@ -4,14 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Validador de Cobertura Telcos USA</title>
+  
+  <!-- FAVICON VECTORIAL TRANSPARENTE (SIN FONDO) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120' fill='none'%3E%3Cdefs%3E%3ClinearGradient id='cg' x1='20%25' y1='20%25' x2='80%25' y2='80%25'%3E%3Cstop offset='0%25' stop-color='%23003b95'/%3E%3Cstop offset='100%25' stop-color='%230066cc'/%3E%3C/linearGradient%3E%3ClinearGradient id='wg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300b4d8'/%3E%3Cstop offset='100%25' stop-color='%2300e5ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M 36 62 L 48 76 C 50 78 54 78 56 76 L 74 50' stroke='url(%23cg)' stroke-width='11' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M 66 43 A 18 18 0 0 1 82 59' stroke='url(%23wg)' stroke-width='6' stroke-linecap='round'/%3E%3Cpath d='M 66 30 A 31 31 0 0 1 95 59' stroke='url(%23wg)' stroke-width='6' stroke-linecap='round'/%3E%3Cpath d='M 66 17 A 44 44 0 0 1 108 59' stroke='url(%23wg)' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E" />
+
   <style>
     :root {
       --bg: #080c14;
       --card-bg: #0f172a;
       --card-border: #1e293b;
-      --primary: #0057b8; /* AT&T Blue */
+      --primary: #0057b8;
       --primary-hover: #004494;
-      --directv-orange: #f58220;
       --text: #f8fafc;
       --muted: #94a3b8;
       --error-bg: rgba(127, 29, 29, 0.4);
@@ -41,22 +44,28 @@
       background-color: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 16px;
-      padding: 2rem;
+      padding: 2.25rem 2rem;
       box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
     }
 
-    .header {
+    .header-branding {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
       margin-bottom: 1.5rem;
+    }
+
+    .app-logo {
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
     }
 
     .title {
       font-size: 1.45rem;
       font-weight: 700;
       color: #fff;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.25rem;
     }
 
     .subtitle {
@@ -128,7 +137,6 @@
     .submit-btn:hover:not(:disabled) { background-color: var(--primary-hover); }
     .submit-btn:disabled { opacity: 0.65; cursor: not-allowed; }
 
-    /* Contenedor de Resultados Detallados */
     .results-container {
       margin-top: 1.5rem;
       display: none;
@@ -149,9 +157,6 @@
       font-weight: 600;
       color: #38bdf8;
       margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
     }
 
     .service-section {
@@ -180,7 +185,6 @@
       font-size: 0.85rem;
     }
 
-    /* Tabla de Planes */
     .plans-table {
       width: 100%;
       border-collapse: collapse;
@@ -248,9 +252,29 @@
 
   <div class="container">
     <div class="card">
-      <div class="header">
-        <h1 class="title">⚡ Validador Multimarca Telcos USA</h1>
-        <p class="subtitle">Consulta servicios, velocidades simétricas y ofertas por dirección o ZIP code.</p>
+      
+      <!-- LOGO DE LA APP Y TÍTULO -->
+      <div class="header-branding">
+        <svg class="app-logo" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="checkGrad" x1="20%" y1="20%" x2="80%" y2="80%">
+              <stop offset="0%" stop-color="#003b95"/>
+              <stop offset="100%" stop-color="#0066cc"/>
+            </linearGradient>
+            <linearGradient id="wifiGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#00b4d8"/>
+              <stop offset="100%" stop-color="#00e5ff"/>
+            </linearGradient>
+          </defs>
+          <path d="M 36 62 L 48 76 C 50 78 54 78 56 76 L 74 50" stroke="url(#checkGrad)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M 66 43 A 18 18 0 0 1 82 59" stroke="url(#wifiGrad)" stroke-width="6" stroke-linecap="round"/>
+          <path d="M 66 30 A 31 31 0 0 1 95 59" stroke="url(#wifiGrad)" stroke-width="6" stroke-linecap="round"/>
+          <path d="M 66 17 A 44 44 0 0 1 108 59" stroke="url(#wifiGrad)" stroke-width="6" stroke-linecap="round"/>
+        </svg>
+        <div>
+          <h1 class="title">Validador Telcos USA</h1>
+          <p class="subtitle">Consulta servicios, velocidades simétricas y ofertas por dirección o ZIP code.</p>
+        </div>
       </div>
 
       <div class="input-wrapper">
@@ -268,15 +292,11 @@
         Consultar Cobertura
       </button>
 
-      <!-- Caja de Error -->
       <div id="errorBox" class="feedback-box" style="display: none;"></div>
 
-      <!-- Detalle Exhaustivo de Red y Servicios Disponibles -->
       <div id="resultsContainer" class="results-container">
         
-        <div id="addressBanner" class="address-banner">
-          📍 1045 91ST AVE, OAKLAND, CA 94603
-        </div>
+        <div id="addressBanner" class="address-banner"></div>
 
         <!-- 1. AT&T INTERNET FIBRA -->
         <div class="service-section">
@@ -352,7 +372,7 @@
 
     let debounceTimer;
 
-    // Autocompletado gratuito
+    // Autocompletado gratuito Photon (OSM)
     input.addEventListener('input', () => {
       clearTimeout(debounceTimer);
       const query = input.value.trim();
@@ -431,7 +451,6 @@
       const isZip = /^\d{5}$/.test(val);
 
       if (isZip) {
-        // Validación por Código Postal
         try {
           const res = await fetch(`https://api.zippopotam.us/us/${val}`);
           if (!res.ok) {
@@ -444,13 +463,12 @@
           addressBanner.innerHTML = `📍 Zona Validada: ${place['place name'].toUpperCase()}, ${place['state abbreviation']} ${val}`;
           resultsContainer.style.display = 'block';
         } catch (e) {
-          showError('Error de red al consultar el código postal.');
+          showError('Error de conexión al verificar el código postal.');
         } finally {
           btn.textContent = 'Consultar Cobertura';
           btn.disabled = false;
         }
       } else {
-        // Validación por Dirección
         const hasNumber = /\d+/.test(val);
         if (!hasNumber) {
           showError('Para validar una dirección exacta, ingresa el número de calle (Ej: 1045 91st Ave, Oakland, CA 94603).');
@@ -464,7 +482,7 @@
           resultsContainer.style.display = 'block';
           btn.textContent = 'Consultar Cobertura';
           btn.disabled = false;
-        }, 500);
+        }, 400);
       }
     }
 
